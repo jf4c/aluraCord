@@ -1,6 +1,7 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import appConfig from '../config.json'
 
+
 function GlobalStyle() {
     return (
       <style global jsx>{`
@@ -66,7 +67,7 @@ function Titulo(props) {
 //   export default HomePage
 
 export default function PaginaInicial() {
-    const username = 'peas';
+    const username = 'jf4c';
   
     return (
       <>
@@ -74,11 +75,13 @@ export default function PaginaInicial() {
         <Box
           styleSheet={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            backgroundColor: appConfig.theme.colors.primary[500],
-            backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
+            // backgroundColor: appConfig.theme.colors.primary[500],
+            backgroundImage: 'url(https://images.pexels.com/photos/4655892/pexels-photo-4655892.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260)',
+            // backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
             backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
           }}
         >
+          {/* box 1 */}
           <Box
             styleSheet={{
               display: 'flex',
@@ -134,7 +137,7 @@ export default function PaginaInicial() {
   
   
             {/* Photo Area */}
-            <Box
+            <Box 
               styleSheet={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -159,7 +162,7 @@ export default function PaginaInicial() {
               <Text
                 variant="body4"
                 styleSheet={{
-                  color: appConfig.theme.colors.neutrals[200],
+                  color: appConfig.theme.colors.neutrals[100],
                   backgroundColor: appConfig.theme.colors.neutrals[900],
                   padding: '3px 10px',
                   borderRadius: '1000px'
