@@ -1,23 +1,53 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js'
+
+const SUPABASE_ANNON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMwNjQ2OCwiZXhwIjoxOTU4ODgyNDY4fQ.Ngwo_u7ttepeaFQd6DWUh_JIylM-omFmHz3e_7VAIc8'
+const SUPABASE_URL = 'https://cctjqtusltrpikkvwsua.supabase.co'
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANNON_KEY);
+
+supabaseClient
+    .from('mensagens')
+    .select('*')
+    .then((dados) => {
+        console.log(dados);
+    })
 
 export default function ChatPage() {
    const [mensagem, setMensagem] = React.useState('');
    const [listaDeMensagem, setListaDeMensagem] = React.useState([]);
    
+    React.useEffect(()  => {
+        supabaseClient
+            .from('mensagens')
+            .select('*')
+            .order('id', {ascending: false})
+            .then(({data, }) => {
+                setListaDeMensagem(data)
+            });
+    }, []);
    // Sua lógica vai aqui
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            id: listaDeMensagem.length + 1,
+            // id: listaDeMensagem.length + 1,
             de: 'dovahkiin',
             texto: novaMensagem,
         };
 
-        setListaDeMensagem([
-            mensagem,
-            ...listaDeMensagem,
-        ]);
+        supabaseClient
+            .from('mensagens')
+            .insert([
+                mensagem
+            ])
+            .then(({ data }) => {
+                setListaDeMensagem([
+                    data[0],
+                    ...listaDeMensagem,
+                ]);
+                
+            });
+
         setMensagem('');
     }
     // ./Sua lógica vai aqui
@@ -204,7 +234,8 @@ function MessageList(props) {
                                     display: 'inline-block',
                                     marginRight: '8px',
                                 }}
-                                src={`https://avatars.githubusercontent.com/u/83073691?u=54b510ac99edd1123176172c3f8ac2ad6a20d2cc&v=4`}
+                                // src={`https://avatars.githubusercontent.com/u/83073691?u=54b510ac99edd1123176172c3f8ac2ad6a20d2cc&v=4`}
+                                src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Text 
                                 tag="strong"
