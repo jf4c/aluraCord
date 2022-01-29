@@ -42,8 +42,8 @@ function Titulo(props) {
 export default function PaginaInicial() {
   // const username = 'jf4c';
   const [username, setUsername] = React.useState('');
-  const roteamento = useRouter();
   const [userLocation, setUserLocation] = React.useState();
+  const roteamento = useRouter();
   // entender essa parte
   React.useEffect(() =>{
     fetch(`https://api.github.com/users/${username}`).then(async (resposta) =>{
@@ -85,7 +85,7 @@ export default function PaginaInicial() {
             onSubmit={function(infosDoEvento) {
               infosDoEvento.preventDefault();
               console.log('alguém submeteu');
-              username.length > 2 ? roteamento.push('/chat') : roteamento.push('/404');
+              username.length > 2 ? roteamento.push(`/chat?username=${username}`) : roteamento.push('/404');
             }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
