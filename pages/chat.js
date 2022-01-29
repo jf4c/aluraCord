@@ -65,6 +65,7 @@ export default function ChatPage() {
             ])
             .then(({ data }) => {   
             });
+            
 
         setMensagem('');
     }

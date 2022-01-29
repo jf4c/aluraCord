@@ -3,9 +3,6 @@ import appConfig from '../config.json';
 import { useRouter } from 'next/router'
 import React from 'react';
 
-
-
-
 function Titulo(props) {
     // console.log(props.children);
     const Tag = props.tag || 'h1';

@@ -12,6 +12,7 @@ export function ButtonSendSticker(props) {
         
       }}
     >
+      
       <Button
         styleSheet={{
             borderRadius: '50%',
