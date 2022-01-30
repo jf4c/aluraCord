@@ -4,7 +4,7 @@ import appConfig from '../config.json';
 import { useRouter } from 'next/router'
 import { createClient } from '@supabase/supabase-js'
 import { ButtonSendSticker } from '../src/componentes/buttonSendStickes'
-import next from 'next';
+// import next from 'next';
 
 const SUPABASE_ANNON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMwNjQ2OCwiZXhwIjoxOTU4ODgyNDY4fQ.Ngwo_u7ttepeaFQd6DWUh_JIylM-omFmHz3e_7VAIc8'
 const SUPABASE_URL = 'https://cctjqtusltrpikkvwsua.supabase.co'
@@ -17,13 +17,37 @@ function escutaMensagemEmTempoReal(adicionaMensagem){
             adicionaMensagem(respostaLive.new);
         })
         .subscribe();
+}
+
+
+async function deletaMensagemSupabase (idMensagem) {
+    const mensagemDeletada = await supabaseClient
+        .from("mensagens")
+        .delete()
+        .match({id: idMensagem})
+        .then((data) => {
+            console.log(data);
+        })
+    console.log(mensagemDeletada);
 } 
+
+// function escutaDeleteMensagem() {
+//     return (
+//         supabaseClient
+//             .from('mensagens')
+//             .on('DELETE', (data) =>{
+//                 console.log(data.new)
+//             })
+//             .subscribe()
+//     )
+// }
+    
 
 supabaseClient
     .from('mensagens')
     .select('*')
     .then((dados) => {
-        console.log(dados);
+        // console.log(dados);
     })
 
 export default function ChatPage() {
@@ -49,7 +73,13 @@ export default function ChatPage() {
                 ]
             });
         });
+       
+    
     }, []);
+
+
+
+
    // Sua lógica vai aqui
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
@@ -65,7 +95,7 @@ export default function ChatPage() {
             ])
             .then(({ data }) => {   
             });
-            
+
 
         setMensagem('');
     }
@@ -75,9 +105,12 @@ export default function ChatPage() {
         <Box
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '1px', // => Não sei o pq mas funciona
+
                 backgroundImage: `url(https://images.pexels.com/photos/4655892/pexels-photo-4655892.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260)`,
+               
                 backgroundRepeat: 'no-repeat', backgroundSize: '100% 150%', backgroundBlendMode: 'multiply',
-                color: appConfig.theme.colors.neutrals['000']
+                color: appConfig.theme.colors.neutrals['000'],
             }}
         >
             <Box
@@ -100,6 +133,7 @@ export default function ChatPage() {
                         position: 'relative',
                         display: 'flex',
                         flex: 1,
+                        
                         height: '80%',
                         backgroundColor: appConfig.theme.colors.neutrals["0500"],
                         flexDirection: 'column',
@@ -107,11 +141,10 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-
                     <MessageList mensagens={listaDeMensagem} />
-                    
+                   
                     {/* {listaDeMensagem.map((mensagemAtual) => {
-                        console.log(mensagemAtual)
+                        // console.log(mensagemAtual)
                         return (
                             <li key={mensagemAtual.id}>
                                 {mensagemAtual.de}: {mensagemAtual.texto}
@@ -250,12 +283,12 @@ function Header() {
 }
 
 function MessageList(props) {
-    console.log('MessageList', props);
+    // console.log('MessageList', props);
     return (
         <Box
             tag="ul"
             styleSheet={{
-                overflow: 'hidden',
+                overflow: 'scroll',
                 display: 'flex',
                 flexDirection: 'column-reverse',
                 flex: 1,
@@ -283,6 +316,8 @@ function MessageList(props) {
                                 marginBottom: '8px',
                                 display: 'flex',
                                 alignItems:'center',
+                                
+                                
                             }}
                         >
                             <Image
@@ -314,7 +349,26 @@ function MessageList(props) {
                             >
                                 {(new Date().toLocaleDateString())}
                             </Text>
+                            
+                            <Button
+                                styleSheet={{
+                                    backgroundColor: appConfig.theme.colors.neutrals["700"], 
+                                    marginLeft:'auto',
+                                    marginBottom:'auto',
+                                    borderRadius: '100%',
+                                    Width: '5px',
+                                    Height: '25px',
+                                    
+                                }}
+                                
+                                iconName=""
+                                label="x"
+                                onClick={() => {
+                                    deletaMensagemSupabase(mensagem.id);
+                                   console.log(escutaDeleteMensagem())
 
+                                }} 
+                            />
                         
                         </Box>
                         {mensagem.texto.startsWith(':sticker:') 
