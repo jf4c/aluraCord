@@ -20,28 +20,14 @@ function escutaMensagemEmTempoReal(adicionaMensagem){
 }
 
 
-async function deletaMensagemSupabase (idMensagem) {
-    const mensagemDeletada = await supabaseClient
-        .from("mensagens")
-        .delete()
-        .match({id: idMensagem})
-        .then((data) => {
-            console.log(data);
-        })
-    console.log(mensagemDeletada);
-} 
 
-// function escutaDeleteMensagem() {
-//     return (
-//         supabaseClient
-//             .from('mensagens')
-//             .on('DELETE', (data) =>{
-//                 console.log(data.new)
-//             })
-//             .subscribe()
-//     )
-// }
-    
+async function deletaMensagemSupabase(idMensagem) {
+    const mensagemDelete = await supabaseClient
+            .from('mensagens')
+            .delete()
+            .match({id:idMensagem})
+
+}
 
 supabaseClient
     .from('mensagens')
@@ -51,11 +37,13 @@ supabaseClient
     })
 
 export default function ChatPage() {
+
     const roteamento = useRouter();
     const userLog = roteamento.query.username;
     const [mensagem, setMensagem] = React.useState('');
     const [listaDeMensagem, setListaDeMensagem] = React.useState([]);
-   
+
+
     React.useEffect(()  => {
         supabaseClient
             .from('mensagens')
@@ -73,17 +61,11 @@ export default function ChatPage() {
                 ]
             });
         });
-       
-    
+
     }, []);
 
-
-
-
-   // Sua lógica vai aqui
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            // id: listaDeMensagem.length + 1,
             de: userLog,
             texto: novaMensagem,
         };
@@ -96,13 +78,12 @@ export default function ChatPage() {
             .then(({ data }) => {   
             });
 
-
         setMensagem('');
     }
-    // ./Sua lógica vai aqui
    
     return (
         <Box
+        
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 width: '1px', // => Não sei o pq mas funciona
@@ -141,16 +122,10 @@ export default function ChatPage() {
                         padding: '16px',
                     }}
                 >
-                    <MessageList mensagens={listaDeMensagem} />
-                   
-                    {/* {listaDeMensagem.map((mensagemAtual) => {
-                        // console.log(mensagemAtual)
-                        return (
-                            <li key={mensagemAtual.id}>
-                                {mensagemAtual.de}: {mensagemAtual.texto}
-                            </li>
-                        )
-                    })} */}
+
+
+                    <MessageList mensagens={listaDeMensagem} setListaDeMensagem={setListaDeMensagem}/>
+                
 
                     <Box
                         as="form"
@@ -199,35 +174,6 @@ export default function ChatPage() {
                                 handleNovaMensagem(mensagem);
                             }}
                         />
-                       
-                        
-                        {/* callBack */}
-                        {/* <ButtonSendSticker 
-                            onStickerClick={(sticker) => {
-                                handleNovaMensagem(':sticker:' + sticker);
-                            }}  
-                        /> */}
-                        
-                        
-                        {/* buttonSendMensager */}
-                        {/* <Image styleSheet={{
-                            backgroundColor:appConfig.theme.colors.neutrals[500],
-                            borderRadius:'100%', 
-                            padding: '2px',
-                            width: '40px',
-                            height: '40px',
-                            transition: '0.5s',
-                            hover: {
-                                backgroundColor: appConfig.theme.colors.neutrals[100],
-                            },
-                            }}
-                            onClick ={() => {
-                                handleNovaMensagem(mensagem);
-                            }}
-                            src ={"https://icon-library.com/images/fly_send_paper_submit_plane-512.png"}
-                            colorVariant='neutral'
-                            
-                        /> */}
                     </Box>
                     <Box 
                         styleSheet={{
@@ -283,7 +229,14 @@ function Header() {
 }
 
 function MessageList(props) {
-    // console.log('MessageList', props);
+    const roteamento = useRouter();
+    const user = roteamento.query.username;    
+    function handleDelete(id) {
+        const deleteMsg = props.mensagens.filter((msg) => msg.id !== id);
+        props.setListaDeMensagem(deleteMsg);
+    }
+
+
     return (
         <Box
             tag="ul"
@@ -316,8 +269,7 @@ function MessageList(props) {
                                 marginBottom: '8px',
                                 display: 'flex',
                                 alignItems:'center',
-                                
-                                
+                              
                             }}
                         >
                             <Image
@@ -328,13 +280,11 @@ function MessageList(props) {
                                     display: 'inline-block',
                                     marginRight: '8px',
                                 }}
-                                // src={`https://avatars.githubusercontent.com/u/83073691?u=54b510ac99edd1123176172c3f8ac2ad6a20d2cc&v=4`}
                                 src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Text 
                                 tag="strong"
                                 styleSheet={{
-                                    // display: 'flex',
                                 }} 
                             >
                                 {mensagem.de}
@@ -349,26 +299,45 @@ function MessageList(props) {
                             >
                                 {(new Date().toLocaleDateString())}
                             </Text>
-                            
-                            <Button
-                                styleSheet={{
-                                    backgroundColor: appConfig.theme.colors.neutrals["700"], 
-                                    marginLeft:'auto',
-                                    marginBottom:'auto',
-                                    borderRadius: '100%',
-                                    Width: '5px',
-                                    Height: '25px',
+                            {user === `jf4c`
+                            ?(
+                                <Button
+                                    styleSheet={{
+                                        backgroundColor: appConfig.theme.colors.neutrals["700"], 
+                                        marginLeft:'auto',
+                                        marginBottom:'auto',
+                                        borderRadius: '100%',
+                                        Width: '5px',
+                                        Height: '25px',
+                                        
+                                    }}
                                     
-                                }}
-                                
-                                iconName=""
-                                label="x"
-                                onClick={() => {
-                                    deletaMensagemSupabase(mensagem.id);
-                                   console.log(escutaDeleteMensagem())
+                                    iconName=""
+                                    label="x"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleDelete(mensagem.id);
+                                        deletaMensagemSupabase(mensagem.id);
+                                    }} 
+                                />
 
-                                }} 
-                            />
+                            )
+                            :(
+                                <Button
+                                    styleSheet={{
+                                        backgroundColor: appConfig.theme.colors.neutrals["700"], 
+                                        marginLeft:'auto',
+                                        marginBottom:'auto',
+                                        borderRadius: '100%',
+                                        Width: '5px',
+                                        Height: '25px',
+                                        
+                                    }}
+                                    disabled
+                                    iconName=""
+                                    label="x"
+                                />
+                            )}
                         
                         </Box>
                         {mensagem.texto.startsWith(':sticker:') 
